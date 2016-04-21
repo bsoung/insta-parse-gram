@@ -7,56 +7,49 @@
 //
 
 #import "RegisterViewController.h"
+#import <Parse/Parse.h>
 
 @interface RegisterViewController ()
-
+@property (nonatomic, strong) IBOutlet UITextField *userRegisterTextField;
+@property (nonatomic, strong) IBOutlet UITextField *passwordRegisterTextField;
 @end
 
 @implementation RegisterViewController
 
-@synthesize userRegisterTextField = _userRegisterTextField, passwordRegisterTextField = _passwordRegisterTextField;
-
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    
     if (self) {
 
     }
+    
     return self;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
+#pragma mark - Signing up for a new account methods
 
-
-#pragma mark - View lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    self.userRegisterTextField = nil;
-    self.passwordRegisterTextField = nil;
-}
-
-
-#pragma mark IB Actions
-
-////Sign Up Button pressed
 -(IBAction)signUpUserPressed:(id)sender
 {
-    //TODO
-    //If signup sucessful:
-    [self performSegueWithIdentifier:@"SignupSuccesful" sender:self];
+    PFUser *user = [PFUser user];
+    user.username = self.userRegisterTextField.text;
+    user.password = self.passwordRegisterTextField.text;
+    
+    [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!error) {
+            [self performSegueWithIdentifier:@"SignupSuccesful" sender:self];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:[error userInfo][@"error"] preferredStyle:UIAlertControllerStyleAlert];
+            
+            
+            UIAlertAction *okButton = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            [alert addAction:okButton];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
+    }];
 }
 
 @end

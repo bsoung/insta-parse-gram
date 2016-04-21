@@ -8,10 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface WallPicturesViewController : UIViewController
+@interface WallPicturesViewController : UIViewController<UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate>
 
-
-@property (nonatomic, strong) IBOutlet UIScrollView *wallScroll;
+@property (weak, nonatomic) IBOutlet UITableView *TableView;
 
 -(IBAction)logoutPressed:(id)sender;
 

@@ -7,15 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <ParseFacebookUtilsV4/PFFacebookUtils.h>
 
 @interface LoginViewController : UIViewController
-
-
-@property (nonatomic, strong) IBOutlet UITextField *userTextField;
-@property (nonatomic, strong) IBOutlet UITextField *passwordTextField;
-
-
--(IBAction)logInPressed:(id)sender;
+- (IBAction)FacebookButtonTouchUpInside:(id)sender;
 
 @end

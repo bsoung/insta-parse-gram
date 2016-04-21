@@ -9,15 +9,6 @@
 #import <UIKit/UIKit.h>
 //#import "Constants.h"
 
-
-
-@interface UploadImageViewController : UIViewController <UIPickerViewDelegate>
-
-
-@property (nonatomic, strong) IBOutlet UIImageView *imgToUpload;
-@property (nonatomic, strong) IBOutlet UITextField *commentTextField;
-@property (nonatomic, strong) NSString *username;
-
--(IBAction)selectPicturePressed:(id)sender;
+@interface UploadImageViewController : UIViewController
 
 @end

@@ -8,11 +8,17 @@
 
 #import "LoginViewController.h"
 #import "RegisterViewController.h"
+#import <Parse/Parse.h>
+
+
+@interface LoginViewController ()
+@property (nonatomic, strong) IBOutlet UITextField *userTextField;
+@property (nonatomic, strong) IBOutlet UITextField *passwordTextField;
+
+
+@end
 
 @implementation LoginViewController
-
-@synthesize userTextField = _userTextField, passwordTextField = _passwordTextField;
-
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -23,40 +29,47 @@
     return self;
 }
 
+#pragma mark - Private methods
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-
-#pragma mark - View lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-    
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    
-    // Release any retained subviews of the main view.
-    self.userTextField = nil;
-    self.passwordTextField = nil;
-}
-
-
-#pragma mark IB Actions
-
-//Login button pressed
 -(IBAction)logInPressed:(id)sender
 {
-    
-    [self performSegueWithIdentifier:@"LoginSuccesful" sender:self];
+    [PFUser logInWithUsernameInBackground:self.userTextField.text password:self.passwordTextField.text block:^(PFUser *user, NSError *error) {
+        if (user) {
+            [self performSegueWithIdentifier:@"LoginSuccesful" sender:self];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:[error userInfo][@"error"] preferredStyle:UIAlertControllerStyleAlert];
 
+            
+            UIAlertAction *okButton = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            [alert addAction:okButton];
+           [self presentViewController:alert animated:YES completion:nil];
+        }
+    }];
 }
 
+- (IBAction)FacebookButtonTouchUpInside:(id)sender {
+    
+    NSArray *permissions = @[@"email"];
+    
+    [PFFacebookUtils logInInBackgroundWithReadPermissions:permissions block:^(PFUser *user, NSError *error) {
+        if (!user) {
+            NSLog(@"Uh oh. The user cancelled the Facebook login.");
+        } else if (user.isNew) {
+            
+            [self performSegueWithIdentifier:@"LoginSuccesful" sender:self];
+            
+            NSLog(@"User signed up and logged in through Facebook!");
+        } else {
+            
+            [self performSegueWithIdentifier:@"LoginSuccesful" sender:self];
+            
+            NSLog(@"User logged in through Facebook!");
+        }
+    }];
+   
+
+}
 @end
